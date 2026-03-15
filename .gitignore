@@ -1,0 +1,8 @@
+# Ignore dependencies in both client and server
+node_modules/
+dist/
+.env
+
+# Ignore system files
+.DS_Store
+Thumbs.db
