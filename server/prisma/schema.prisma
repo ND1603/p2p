@@ -1,0 +1,20 @@
+// 1. This is the part that was missing!
+generator client {
+  provider = "prisma-client-js"
+}
+
+// 2. Your SQLite connection
+datasource db {
+  provider = "sqlite"
+  url      = "file:./dev.db"
+}
+
+// 3. Your model (keep this as it was)
+model Item {
+  id          Int      @id @default(autoincrement())
+  title       String
+  description String
+  price       Float
+  category    String
+  createdAt   DateTime @default(now())
+}
