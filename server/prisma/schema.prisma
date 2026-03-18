@@ -17,4 +17,5 @@ model Item {
   price       Float
   category    String
   createdAt   DateTime @default(now())
+  seller String @default("Anonymous")
 }
