@@ -1,47 +1,53 @@
 import { useState } from 'react';
-import axios from 'axios';
+import api from './api';
+import { useAuth } from './AuthContext';
 
 function AddItem({ onRefresh }) {
-  // Initialize state with empty strings so they are never 'undefined'
+  const { username } = useAuth();
   const [formData, setFormData] = useState({ 
     title: '', 
     description: '', 
     price: '', 
-    category: '' 
+    category: '',
+    image: null
   });
+  const [statusMsg, setStatusMsg] = useState({ text: '', type: '' });
 
   const handleSubmit = async (e) => {
     e.preventDefault();
+    setStatusMsg({ text: '', type: '' });
 
-    // The Safety Net: Ensure no field is undefined before sending to Prisma
-    const itemData = {
-      title: formData.title || "Untitled",
-      description: formData.description || "", 
-      category: formData.category || "General",
-      price: Number(formData.price) || 0 ,
-      seller: localStorage.getItem('username') || 'Anonymous'
-    };
-
-    console.log("Sending to server:", itemData);
+    const formDataObj = new FormData();
+    formDataObj.append('title', formData.title || "Untitled");
+    formDataObj.append('description', formData.description || "");
+    formDataObj.append('category', formData.category || "General");
+    formDataObj.append('price', Number(formData.price) || 0);
+    formDataObj.append('seller', username || 'Anonymous');
+    if (formData.image) {
+      formDataObj.append('image', formData.image);
+    }
 
     try {
-      await axios.post('http://localhost:5000/api/items', itemData);
-      
-      // Clear the form after success
-      setFormData({ title: '', description: '', price: '', category: '' });
-      
-      // Refresh the list in App.jsx
+      await api.post('/items', formDataObj);
+      setFormData({ title: '', description: '', price: '', category: '', image: null });
+      e.target.reset();
       onRefresh();
-      alert("Item posted successfully!");
+      setStatusMsg({ text: "Item posted successfully!", type: 'success' });
+      setTimeout(() => setStatusMsg({ text: '', type: '' }), 3000);
     } catch (error) {
       console.error("SERVER REJECTED:", error.response?.data || error.message);
-      alert("Error: Check the console for details.");
+      setStatusMsg({ text: "Error posting item. Try again.", type: 'error' });
     }
   };
 
   return (
     <div className="add-item-box">
       <h3>List a New Item</h3>
+      {statusMsg.text && (
+        <div className={`status-msg ${statusMsg.type}`}>
+          {statusMsg.text}
+        </div>
+      )}
       <form onSubmit={handleSubmit} className="form-container">
         <input 
           placeholder="Product Title" 
@@ -56,22 +62,29 @@ function AddItem({ onRefresh }) {
           onChange={e => setFormData({...formData, description: e.target.value})} 
         />
 
-        <div style={{ display: 'flex', gap: '10px' }}>
+        <div className="flex-row">
           <input 
             type="number"
             placeholder="Price ($)" 
             value={formData.price} 
             onChange={e => setFormData({...formData, price: e.target.value})} 
-            style={{ flex: 1 }}
+            className="flex-1"
           />
 
           <input 
             placeholder="Category (e.g. Books)" 
             value={formData.category} 
             onChange={e => setFormData({...formData, category: e.target.value})} 
-            style={{ flex: 1 }}
+            className="flex-1"
           />
         </div>
+
+        <input 
+          type="file" 
+          accept="image/*" 
+          onChange={e => setFormData({...formData, image: e.target.files[0]})} 
+          style={{ marginBottom: '15px' }}
+        />
 
         <button type="submit" className="btn-post">Post to Marketplace</button>
       </form>

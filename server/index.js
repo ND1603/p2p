@@ -1,11 +1,27 @@
 const express = require('express');
 const { PrismaClient } = require('@prisma/client');
 const cors = require('cors');
+const multer = require('multer');
+const path = require('path');
+const fs = require('fs');
 
-// bcrypt hides passwords, jwt creates the login 'session' token
+const dir = './uploads';
+if (!fs.existsSync(dir)) {
+  fs.mkdirSync(dir);
+}
+
+const storage = multer.diskStorage({
+  destination: function (req, file, cb) {
+    cb(null, 'uploads/')
+  },
+  filename: function (req, file, cb) {
+    cb(null, Date.now() + path.extname(file.originalname))
+  }
+})
+const upload = multer({ storage: storage });
+
 const bcrypt = require('bcrypt');
 const jwt = require('jsonwebtoken');
-// --------------------------------
 
 const app = express();
 const prisma = new PrismaClient();
@@ -14,18 +30,18 @@ const SECRET_KEY = "Nathnael"; // Key used to sign tokens
 
 app.use(cors());
 app.use(express.json());
+app.use('/uploads', express.static('uploads'));
 
-//  REGISTER ROUTE (Sign Up) ---
 app.post('/api/register', async (req, res) => {
   const { username, password } = req.body;
   try {
-    // We 'hash' the password so even we can't read it in the database
+    // Hash password for security
     const hashedPassword = await bcrypt.hash(password, 10);
-    
+
     const newUser = await prisma.user.create({
       data: {
         username: username,
-        password: hashedPassword, // Store the scrambled version
+        password: hashedPassword,
       },
     });
     res.json({ message: "User registered!", user: newUser.username });
@@ -34,28 +50,61 @@ app.post('/api/register', async (req, res) => {
   }
 });
 
-//  LOGIN ROUTE (Sign In) ---
 app.post('/api/login', async (req, res) => {
   const { username, password } = req.body;
   try {
-    // 1. Try to find the user in the database
     const user = await prisma.user.findUnique({ where: { username } });
     if (!user) return res.status(400).json({ error: "User not found" });
 
-    // 2. Check if the password they typed matches the 'scramble' in the DB
     const isMatch = await bcrypt.compare(password, user.password);
     if (!isMatch) return res.status(400).json({ error: "Invalid password" });
 
-    // 3. Create a 'wristband' (Token) so the browser remembers them
+    // Generate JWT session token valid for 24 hours
     const token = jwt.sign({ id: user.id, username: user.username }, SECRET_KEY, { expiresIn: '24h' });
-    
+
     res.json({ token, username: user.username });
   } catch (error) {
     res.status(500).json({ error: "Login failed" });
   }
 });
 
-// ... Your existing GET, POST items, and DELETE routes 
+app.post('/api/items', upload.single('image'), async (req, res) => {
+  try {
+    const { title, description, price, category, seller } = req.body;
+    const imageUrl = req.file ? req.file.filename : null;
+
+    // Convert price to float, as FormData sends strings
+    const newPrice = parseFloat(price) || 0;
+
+    const newItem = await prisma.item.create({
+      data: {
+        title: title || "Untitled",
+        description: description || "",
+        price: newPrice,
+        category: category || "General",
+        seller: seller || "Anonymous",
+        imageUrl,
+      },
+    });
+    res.json(newItem);
+  } catch (error) {
+    console.error(error);
+    res.status(500).json({ error: "Failed to create item" });
+  }
+});
+
+app.delete('/api/items/:id', async (req, res) => {
+  try {
+    const { id } = req.params;
+    await prisma.item.delete({
+      where: { id: parseInt(id) }
+    });
+    res.json({ message: "Item deleted successfully" });
+  } catch (error) {
+    console.error(error);
+    res.status(500).json({ error: "Failed to delete item" });
+  }
+});
 
 app.get('/api/items', async (req, res) => {
   try {
@@ -66,7 +115,19 @@ app.get('/api/items', async (req, res) => {
   }
 });
 
-// (Keep the rest of your routes exactly as they were!)
+app.get('/api/items/:id', async (req, res) => {
+  try {
+    const { id } = req.params;
+    const item = await prisma.item.findUnique({
+      where: { id: parseInt(id) }
+    });
+    if (!item) return res.status(404).json({ error: "Item not found" });
+    res.json(item);
+  } catch (error) {
+    console.error(error);
+    res.status(500).json({ error: "Failed to fetch item" });
+  }
+});
 
 app.listen(PORT, () => {
   console.log(`Server is running on http://localhost:${PORT}`);

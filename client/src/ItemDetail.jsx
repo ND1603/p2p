@@ -1,13 +1,13 @@
 import { useEffect, useState } from 'react';
 import { useParams, Link } from 'react-router-dom';
-import axios from 'axios';
+import api from './api';
 
 function ItemDetail() {
   const { id } = useParams();
   const [item, setItem] = useState(null);
 
   useEffect(() => {
-    axios.get(`http://localhost:5000/api/items/${id}`)
+    api.get(`/items/${id}`)
       .then(res => setItem(res.data))
       .catch(err => console.error(err));
   }, [id]);
@@ -19,12 +19,17 @@ function ItemDetail() {
       <Link to="/" className="back-button">← Back to Marketplace</Link>
       
       <div className="product-layout">
-        {/* Left Side: Placeholder for image later */}
         <div className="product-image-section">
-          <div className="image-placeholder">No Image Provided</div>
+          {item.imageUrl ? (
+            <img 
+              src={`http://localhost:5000/uploads/${item.imageUrl}`} 
+              alt={item.title} 
+              style={{ width: '100%', maxWidth: '400px', borderRadius: '10px', objectFit: 'cover' }} 
+            />
+          ) : (
+            <div className="image-placeholder">No Image Provided</div>
+          )}
         </div>
-
-        {/* Right Side: Information */}
         <div className="product-info-section">
           <span className="detail-category">{item.category}</span>
           <h1 className="detail-title">{item.title}</h1>

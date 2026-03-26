@@ -3,13 +3,11 @@ generator client {
   provider = "prisma-client-js"
 }
 
-// SQLite connection
 datasource db {
   provider = "sqlite"
   url      = "file:./dev.db"
 }
 
-// Your model 
 model Item {
   id          Int      @id @default(autoincrement())
   title       String
@@ -17,7 +15,8 @@ model Item {
   price       Float
   category    String
   createdAt   DateTime @default(now())
-  seller String @default("Anonymous")
+  seller      String   @default("Anonymous")
+  imageUrl    String?
 }
 model User {
   id       Int    @id @default(autoincrement())
