@@ -24,7 +24,7 @@
 
 .card {
   border: 1px solid #e5e7eb;
-  border-radius: 120px; /* Note: Adjusting from my previous 12px for a modern look if you prefer, or keep 12px */
+  border-radius: 120px;
   border-radius: 12px;
   padding: 20px;
   box-shadow: 0 4px 6px -1px rgb(0 0 0 / 0.1);
@@ -59,6 +59,7 @@
 .btn-view:hover {
   background-color: #1d4ed8;
 }
+
 .search-input {
   width: 100%;
   padding: 15px;
@@ -72,8 +73,10 @@
 .search-input:focus {
   border-color: #2563eb;
 }
+
 .btn-delete {
-  background-color: #ef4444; /* Standard red */
+  background-color: #ef4444;
+  /* Standard red */
   color: white;
   border: none;
   padding: 8px 14px;
@@ -85,7 +88,8 @@
 }
 
 .btn-delete:hover {
-  background-color: #dc2626; /* Darker red on hover */
+  background-color: #dc2626;
+  /* Darker red on hover */
 }
 
 .form-container {
@@ -96,7 +100,8 @@
   margin: 0 auto;
 }
 
-.form-container input, .form-container textarea {
+.form-container input,
+.form-container textarea {
   padding: 10px;
   border: 1px solid #ddd;
   border-radius: 8px;
@@ -146,7 +151,7 @@
   background: white;
   padding: 40px;
   border-radius: 15px;
-  box-shadow: 0 10px 30px rgba(0,0,0,0.05);
+  box-shadow: 0 10px 30px rgba(0, 0, 0, 0.05);
 }
 
 .image-placeholder {
@@ -163,7 +168,8 @@
 .detail-price {
   font-size: 2rem;
   font-weight: bold;
-  color: #059669; /* Nice green for price */
+  color: #059669;
+  /* Nice green for price */
   margin: 10px 0;
 }
 
@@ -215,12 +221,18 @@
   border: none;
   font-weight: bold;
 }
+
 /* Container to center the cards on the screen */
 .auth-page {
   display: flex;
   justify-content: center;
   align-items: center;
-  min-height: 70vh;
+  min-height: 100vh;
+  width: 100vw;
+  background-color: #f8fafc;
+  margin: 0;
+  padding: 0;
+  box-sizing: border-box;
 }
 
 /* The actual "Card" */
@@ -257,7 +269,8 @@
 
 .auth-form input:focus {
   outline: none;
-  border-color: #2563eb; /* Campus Blue */
+  border-color: #2563eb;
+  /* Campus Blue */
 }
 
 /* The primary button */
@@ -307,10 +320,12 @@
   border-radius: 4px;
   text-align: center;
 }
+
 .status-msg.success {
   background-color: #dcfce7;
   color: #166534;
 }
+
 .status-msg.error {
   background-color: #fee2e2;
   color: #991b1b;

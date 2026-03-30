@@ -4,10 +4,10 @@ import { useAuth } from './AuthContext';
 
 function AddItem({ onRefresh }) {
   const { username } = useAuth();
-  const [formData, setFormData] = useState({ 
-    title: '', 
-    description: '', 
-    price: '', 
+  const [formData, setFormData] = useState({
+    title: '',
+    description: '',
+    price: '',
     category: '',
     image: null
   });
@@ -49,40 +49,40 @@ function AddItem({ onRefresh }) {
         </div>
       )}
       <form onSubmit={handleSubmit} className="form-container">
-        <input 
-          placeholder="Product Title" 
-          value={formData.title} 
-          onChange={e => setFormData({...formData, title: e.target.value})} 
+        <input
+          placeholder="Product Title"
+          value={formData.title}
+          onChange={e => setFormData({ ...formData, title: e.target.value })}
           required
         />
 
-        <textarea 
-          placeholder="Description (e.g., Condition, how long you've had it)" 
-          value={formData.description} 
-          onChange={e => setFormData({...formData, description: e.target.value})} 
+        <textarea
+          placeholder="Description (e.g., Condition, how long you've had it)"
+          value={formData.description}
+          onChange={e => setFormData({ ...formData, description: e.target.value })}
         />
 
         <div className="flex-row">
-          <input 
+          <input
             type="number"
-            placeholder="Price ($)" 
-            value={formData.price} 
-            onChange={e => setFormData({...formData, price: e.target.value})} 
+            placeholder="Price ($)"
+            value={formData.price}
+            onChange={e => setFormData({ ...formData, price: e.target.value })}
             className="flex-1"
           />
 
-          <input 
-            placeholder="Category (e.g. Books)" 
-            value={formData.category} 
-            onChange={e => setFormData({...formData, category: e.target.value})} 
+          <input
+            placeholder="Category (e.g. Books)"
+            value={formData.category}
+            onChange={e => setFormData({ ...formData, category: e.target.value })}
             className="flex-1"
           />
         </div>
 
-        <input 
-          type="file" 
-          accept="image/*" 
-          onChange={e => setFormData({...formData, image: e.target.files[0]})} 
+        <input
+          type="file"
+          accept="image/*"
+          onChange={e => setFormData({ ...formData, image: e.target.files[0] })}
           style={{ marginBottom: '15px' }}
         />
 

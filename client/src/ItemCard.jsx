@@ -9,7 +9,12 @@ function ItemCard({ item, onDelete, currentUsername }) {
         <span className="category-tag">{item.category}</span>
         
         {isOwner && (
-          <button onClick={() => onDelete(item.id)} className="delete-btn">×</button>
+          <div className="owner-actions" style={{ display: 'flex', gap: '8px' }}>
+            <Link to={`/edit-item/${item.id}`} style={{ textDecoration: 'none' }}>
+              <button className="edit-btn" style={{ background: '#fef08a', color: '#854d0e', border: 'none', borderRadius: '50%', width: '24px', height: '24px', cursor: 'pointer', fontWeight: 'bold', display: 'flex', alignItems: 'center', justifyContent: 'center', fontSize: '12px' }}>✎</button>
+            </Link>
+            <button onClick={() => onDelete(item.id)} className="delete-btn">×</button>
+          </div>
         )}
       </div>
       

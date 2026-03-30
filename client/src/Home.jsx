@@ -1,6 +1,6 @@
 import { useState, useEffect } from 'react';
 import api from './api';
-import AddItem from './AddItem.jsx'; 
+import AddItem from './AddItem.jsx';
 import ItemCard from './ItemCard';
 import { useAuth } from './AuthContext';
 
@@ -49,7 +49,7 @@ function Home() {
   return (
     <>
       {username && <AddItem onRefresh={fetchItems} />}
-      
+
       <div className="view-toggle" style={{ margin: '20px 0' }}>
         <button onClick={() => setViewMode('all')} className={viewMode === 'all' ? 'active-tab' : ''}>All Items</button>
         {username && <button onClick={() => setViewMode('mine')} className={viewMode === 'mine' ? 'active-tab' : ''}>My Listings</button>}

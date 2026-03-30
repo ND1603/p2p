@@ -106,6 +106,46 @@ app.delete('/api/items/:id', async (req, res) => {
   }
 });
 
+app.put('/api/items/:id', upload.single('image'), async (req, res) => {
+  try {
+    const { id } = req.params;
+    const { title, description, price, category } = req.body;
+    
+    // Check if item exists
+    const existingItem = await prisma.item.findUnique({ where: { id: parseInt(id) }});
+    if (!existingItem) return res.status(404).json({ error: "Item not found" });
+
+    const newPrice = parseFloat(price);
+    const updateData = {
+      title: title || existingItem.title,
+      description: description !== undefined ? description : existingItem.description,
+      price: isNaN(newPrice) ? existingItem.price : newPrice,
+      category: category || existingItem.category,
+    };
+
+    if (req.file) {
+      updateData.imageUrl = req.file.filename;
+      // Optionally delete the old image file
+      if (existingItem.imageUrl) {
+        const oldPath = path.join(__dirname, 'uploads', existingItem.imageUrl);
+        if (fs.existsSync(oldPath)) {
+          fs.unlinkSync(oldPath);
+        }
+      }
+    }
+
+    const updatedItem = await prisma.item.update({
+      where: { id: parseInt(id) },
+      data: updateData,
+    });
+    
+    res.json(updatedItem);
+  } catch (error) {
+    console.error("Update error:", error);
+    res.status(500).json({ error: "Failed to update item" });
+  }
+});
+
 app.get('/api/items', async (req, res) => {
   try {
     const items = await prisma.item.findMany();
