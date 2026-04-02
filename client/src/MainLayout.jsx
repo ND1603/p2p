@@ -21,6 +21,7 @@ function MainLayout() {
           ) : (
             <div className="user-greeting">
               <span>Hi, <strong>{username}</strong></span>
+              <Link to="/profile" style={{ marginLeft: '15px', color: '#2563eb', fontWeight: '500', textDecoration: 'none' }}>Profile</Link>
               <button onClick={logout} className="btn-delete" style={{ backgroundColor: '#e5e7eb', color: '#374151', marginLeft: '10px' }}>Logout</button>
             </div>
           )}

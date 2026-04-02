@@ -10,7 +10,6 @@ function Home() {
   const [searchQuery, setSearchQuery] = useState('');
   const [selectedCategory, setSelectedCategory] = useState('All');
   const categories = ['All', 'Electronics', 'Books', 'Clothing', 'Dorm Gear'];
-  const [viewMode, setViewMode] = useState('all');
   const { username } = useAuth();
 
   useEffect(() => {
@@ -31,8 +30,7 @@ function Home() {
   const filteredItems = items.filter((item) => {
     const matchesSearch = item.title.toLowerCase().includes(searchQuery.toLowerCase());
     const matchesCategory = selectedCategory === 'All' || item.category === selectedCategory;
-    const matchesUser = viewMode === 'all' || item.seller === username;
-    return matchesSearch && matchesCategory && matchesUser;
+    return matchesSearch && matchesCategory;
   });
 
   const deleteItem = async (id) => {
@@ -49,11 +47,6 @@ function Home() {
   return (
     <>
       {username && <AddItem onRefresh={fetchItems} />}
-
-      <div className="view-toggle" style={{ margin: '20px 0' }}>
-        <button onClick={() => setViewMode('all')} className={viewMode === 'all' ? 'active-tab' : ''}>All Items</button>
-        {username && <button onClick={() => setViewMode('mine')} className={viewMode === 'mine' ? 'active-tab' : ''}>My Listings</button>}
-      </div>
 
       <div className="category-filters">
         {categories.map(cat => (
