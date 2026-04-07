@@ -169,6 +169,57 @@ app.get('/api/items/:id', async (req, res) => {
   }
 });
 
+app.post('/api/orders', async (req, res) => {
+  try {
+    const { buyerUsername, items } = req.body;
+    let total = 0;
+    
+    // Calculate total and prepare items data
+    const orderItemsData = items.map(item => {
+      total += item.price * (item.quantity || 1);
+      return {
+        itemId: item.id,
+        itemTitle: item.title,
+        quantity: item.quantity || 1,
+        priceAtPurchase: item.price
+      };
+    });
+
+    const newOrder = await prisma.order.create({
+      data: {
+        buyerUsername,
+        total,
+        items: {
+          create: orderItemsData
+        }
+      },
+      include: {
+        items: true
+      }
+    });
+    
+    res.json(newOrder);
+  } catch (error) {
+    console.error("Order creation error:", error);
+    res.status(500).json({ error: "Failed to create order" });
+  }
+});
+
+app.get('/api/orders/:buyer', async (req, res) => {
+  try {
+    const { buyer } = req.params;
+    const orders = await prisma.order.findMany({
+      where: { buyerUsername: buyer },
+      include: { items: true },
+      orderBy: { createdAt: 'desc' }
+    });
+    res.json(orders);
+  } catch (error) {
+    console.error("Fetch orders error:", error);
+    res.status(500).json({ error: "Failed to fetch orders" });
+  }
+});
+
 app.listen(PORT, () => {
   console.log(`Server is running on http://localhost:${PORT}`);
 });

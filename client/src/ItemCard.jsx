@@ -1,7 +1,9 @@
 import { Link } from 'react-router-dom';
+import { useCart } from './CartContext';
 
 function ItemCard({ item, onDelete, currentUsername }) {
   const isOwner = currentUsername === item.seller;
+  const { addToCart } = useCart();
 
   return (
     <div className="item-card">
@@ -33,6 +35,12 @@ function ItemCard({ item, onDelete, currentUsername }) {
       <Link to={`/item/${item.id}`}>
         <button className="details-btn">View Details</button>
       </Link>
+      
+      {!isOwner && currentUsername && (
+        <button onClick={() => addToCart(item)} style={{ marginTop: '10px', width: '100%', padding: '10px', backgroundColor: '#10b981', color: 'white', border: 'none', borderRadius: '5px', cursor: 'pointer', fontWeight: 'bold' }}>
+          Add to Cart
+        </button>
+      )}
     </div>
   );
 }

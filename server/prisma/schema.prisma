@@ -23,3 +23,21 @@ model User {
   username String @unique
   password String
 }
+
+model Order {
+  id            Int         @id @default(autoincrement())
+  buyerUsername String
+  total         Float
+  createdAt     DateTime    @default(now())
+  items         OrderItem[]
+}
+
+model OrderItem {
+  id              Int    @id @default(autoincrement())
+  orderId         Int
+  order           Order  @relation(fields: [orderId], references: [id])
+  itemId          Int
+  itemTitle       String
+  quantity        Int
+  priceAtPurchase Float
+}

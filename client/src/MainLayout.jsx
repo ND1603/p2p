@@ -1,9 +1,11 @@
 import React from 'react';
 import { Outlet, Link } from 'react-router-dom';
 import { useAuth } from './AuthContext';
+import { useCart } from './CartContext';
 
 function MainLayout() {
   const { username, logout } = useAuth();
+  const { getCartCount } = useCart();
 
   return (
     <div className="container">
@@ -21,6 +23,7 @@ function MainLayout() {
           ) : (
             <div className="user-greeting">
               <span>Hi, <strong>{username}</strong></span>
+              <Link to="/cart" style={{ marginLeft: '15px', color: '#2563eb', fontWeight: '500', textDecoration: 'none' }}>Cart ({getCartCount()})</Link>
               <Link to="/profile" style={{ marginLeft: '15px', color: '#2563eb', fontWeight: '500', textDecoration: 'none' }}>Profile</Link>
               <button onClick={logout} className="btn-delete" style={{ backgroundColor: '#e5e7eb', color: '#374151', marginLeft: '10px' }}>Logout</button>
             </div>
